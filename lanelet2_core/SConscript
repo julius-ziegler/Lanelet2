@@ -1,0 +1,8 @@
+Import( "subdir_env" )
+src = ["src/LineStringGeometry.cpp", "src/Attribute.cpp", "src/BasicRegulatoryElements.cpp", "src/RegulatoryElementGeometry.cpp", "src/RegulatoryElement.cpp", "src/LaneletMap.cpp", "src/Lanelet.cpp", "src/CompoundLanelet.cpp"]
+
+hdr = Glob("include/lanelet2_core/*.h")
+subdir_env.Install( "#/scons_targets/include/lanelet2/lanelet2_core", [ File( h ) for h in hdr ] )
+
+subdir_env.SharedLibrary( "#/scons_targets/lib/lanelet2/lanelet2_core", src )
+

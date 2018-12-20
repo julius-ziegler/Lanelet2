@@ -1,0 +1,8 @@
+Import( "subdir_env" )
+src = ["src/OsmHandlerWrite.cpp", "src/OsmHandlerLoad.cpp", "src/BinHandler.cpp", "src/Io.cpp", "src/Factory.cpp", "src/OsmFile.cpp"]
+
+hdr = Glob("include/lanelet2_io/*.h")
+subdir_env.Install( "#/scons_targets/include/lanelet2/lanelet2_io", [ File( h ) for h in hdr ] )
+
+subdir_env.SharedLibrary( "#/scons_targets/lib/lanelet2/lanelet2_io", src, LIBS=["lanelet2_core", "pugixml", "boost_system", "boost_filesystem", "boost_serialization"] )
+

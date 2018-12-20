@@ -1,0 +1,11 @@
+Import( "subdir_env" )
+
+subdir_env.MergeFlags('-DPKG_DIR=\\\\\\".\\\\\\"' )
+
+subdir_env.Program( "#/scons_targets/bin/01_dealing_with_lanelet_primitives", ["src/01_dealing_with_lanelet_primitives/main.cpp"], LIBS=["lanelet2_core"] )
+subdir_env.Program( "#/scons_targets/bin/02_regulatory_elements", ["src/02_regulatory_elements/main.cpp"], LIBS=["lanelet2_core"] )
+subdir_env.Program( "#/scons_targets/bin/03_lanelet_map", ["src/03_lanelet_map/main.cpp"], LIBS=["lanelet2_core"] )
+subdir_env.Program( "#/scons_targets/bin/04_reading_and_writing", ["src/04_reading_and_writing/main.cpp"], LIBS=["lanelet2_core", "lanelet2_projection", "lanelet2_io", "Geographic", "pugixml"] )
+subdir_env.Program( "#/scons_targets/bin/05_traffic_rules", ["src/05_traffic_rules/main.cpp"], LIBS=["lanelet2_core", "lanelet2_traffic_rules"] )
+subdir_env.Program( "#/scons_targets/bin/06_routing", ["src/06_routing/main.cpp"], LIBS=["lanelet2_core", "lanelet2_projection", "lanelet2_traffic_rules", "lanelet2_routing", "lanelet2_io", "pugixml"] )
+

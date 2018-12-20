@@ -1,0 +1,6 @@
+Import( "subdir_env" )
+
+data = ["josm/style_images.zip", "josm/laneletpresets.xml", "josm/lanelets.mapcss", "josm/lines.mapcss", "res/mapping_example.osm"] 
+subdir_env.Install( "#/scons_targets/share/lanelet2/", [ File( d ) for d in data ] )
+
+

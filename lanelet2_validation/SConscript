@@ -1,0 +1,4 @@
+Import( "subdir_env" )
+
+subdir_env.Program( "#/scons_targets/bin/lanelet2_validation", ["src/validators/PointsTooClose.cpp", "src/validators/CheckTags.cpp", "src/validators/RoutingGraphIsValid.cpp", "src/BasicValidator.cpp", "src/Validation.cpp", "src/ValidatorFactory.cpp", "src/Cli.cpp", "tools/lanelet2_validate/main.cpp"], LIBS=["lanelet2_core", "lanelet2_routing", "lanelet2_traffic_rules", "lanelet2_projection", "lanelet2_io", "boost_program_options", "Geographic", "pugixml"] )
+

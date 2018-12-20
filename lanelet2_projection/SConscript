@@ -1,0 +1,8 @@
+Import( "subdir_env" )
+src = ["src/UTM.cpp"]
+
+hdr = Glob("include/lanelet2_projection/*.h")
+subdir_env.Install( "#/scons_targets/include/lanelet2/lanelet2_projection", [ File( h ) for h in hdr ] )
+
+subdir_env.SharedLibrary( "#/scons_targets/lib/lanelet2/lanelet2_projection", src, libs=["lanelet2_core", "GeographicLib"] )
+

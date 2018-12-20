@@ -1,0 +1,8 @@
+Import( "subdir_env" )
+src = ["src/GenericTrafficRules.cpp", "src/GermanTrafficRules.cpp", "src/TrafficRulesFactory.cpp"]
+
+hdr = Glob("include/lanelet2_traffic_rules/*.h")
+subdir_env.Install( "#/scons_targets/include/lanelet2/lanelet2_traffic_rules", [ File( h ) for h in hdr ] )
+
+subdir_env.SharedLibrary( "#/scons_targets/lib/lanelet2/lanelet2_traffic_rules", src, LIBS=["lanelet2_core", "pugixml"] )
+

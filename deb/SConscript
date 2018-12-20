@@ -1,0 +1,134 @@
+import os, shutil, sys
+Import('subdir_env') # exported by parent SConstruct
+
+def produce_version_number():
+    import subprocess
+
+    curr=subprocess.check_output(["bash", "-c", 'git log -1 --format="%at"'])
+
+    curr=int(curr)
+
+    import datetime
+
+    return datetime.datetime.fromtimestamp( curr ).strftime( "%Y.%m.%d.%H%M%S" ) 
+
+svn_version=produce_version_number()
+
+# Here's the core info for the package
+
+DEBNAME = "liblanelet2-dev"
+DEBVERSION = "1.0-Ubuntu-18.04"
+DEBMAINT = "Julius Ziegler [ziegler@atlatec.de]"
+DEBARCH = "amd64"
+DEBDEPENDS = "libboost-dev , libeigen3-dev , libgeographic-dev , libpugixml-dev , libpython-dev , libboost-python-dev" # what are we dependent on?
+DEBDESC = "liblanelet2"
+
+DEBFILES = [
+    # Now we specify the files to be included in the .deb
+    # Where they should go, and where they should be copied from.
+    # If you have a lot of files, you may wish to generate this 
+    # list in some other way.
+( "usr/./lib/lanelet2/liblanelet2_routing.so", "#scons_targets/./lib/lanelet2/liblanelet2_routing.so"),
+( "usr/./lib/lanelet2/liblanelet2_projection.so", "#scons_targets/./lib/lanelet2/liblanelet2_projection.so"),
+( "usr/./lib/lanelet2/liblanelet2_io.so", "#scons_targets/./lib/lanelet2/liblanelet2_io.so"),
+( "usr/./lib/lanelet2/liblanelet2_core.so", "#scons_targets/./lib/lanelet2/liblanelet2_core.so"),
+( "usr/./lib/lanelet2/liblanelet2_traffic_rules.so", "#scons_targets/./lib/lanelet2/liblanelet2_traffic_rules.so"),
+( "usr/./include/lanelet2/lanelet2_traffic_rules/TrafficRulesFactory.h", "#scons_targets/./include/lanelet2/lanelet2_traffic_rules/TrafficRulesFactory.h"),
+( "usr/./include/lanelet2/lanelet2_traffic_rules/GermanTrafficRules.h", "#scons_targets/./include/lanelet2/lanelet2_traffic_rules/GermanTrafficRules.h"),
+( "usr/./include/lanelet2/lanelet2_traffic_rules/TrafficRules.h", "#scons_targets/./include/lanelet2/lanelet2_traffic_rules/TrafficRules.h"),
+( "usr/./include/lanelet2/lanelet2_traffic_rules/Exceptions.h", "#scons_targets/./include/lanelet2/lanelet2_traffic_rules/Exceptions.h"),
+( "usr/./include/lanelet2/lanelet2_traffic_rules/GenericTrafficRules.h", "#scons_targets/./include/lanelet2/lanelet2_traffic_rules/GenericTrafficRules.h"),
+( "usr/./include/lanelet2/lanelet2_projection/UTM.h", "#scons_targets/./include/lanelet2/lanelet2_projection/UTM.h"),
+( "usr/./include/lanelet2/lanelet2_projection/Mercator.h", "#scons_targets/./include/lanelet2/lanelet2_projection/Mercator.h"),
+( "usr/./include/lanelet2/lanelet2_core/Forward.h", "#scons_targets/./include/lanelet2/lanelet2_core/Forward.h"),
+( "usr/./include/lanelet2/lanelet2_core/Attribute.h", "#scons_targets/./include/lanelet2/lanelet2_core/Attribute.h"),
+( "usr/./include/lanelet2/lanelet2_core/Exceptions.h", "#scons_targets/./include/lanelet2/lanelet2_core/Exceptions.h"),
+( "usr/./include/lanelet2/lanelet2_core/LaneletMap.h", "#scons_targets/./include/lanelet2/lanelet2_core/LaneletMap.h"),
+( "usr/./include/lanelet2/lanelet2_routing/RoutingGraphVisualization.h", "#scons_targets/./include/lanelet2/lanelet2_routing/RoutingGraphVisualization.h"),
+( "usr/./include/lanelet2/lanelet2_routing/Forward.h", "#scons_targets/./include/lanelet2/lanelet2_routing/Forward.h"),
+( "usr/./include/lanelet2/lanelet2_routing/Graph.h", "#scons_targets/./include/lanelet2/lanelet2_routing/Graph.h"),
+( "usr/./include/lanelet2/lanelet2_routing/RoutingCost.h", "#scons_targets/./include/lanelet2/lanelet2_routing/RoutingCost.h"),
+( "usr/./include/lanelet2/lanelet2_routing/RoutingGraphContainer.h", "#scons_targets/./include/lanelet2/lanelet2_routing/RoutingGraphContainer.h"),
+( "usr/./include/lanelet2/lanelet2_routing/RoutingGraph.h", "#scons_targets/./include/lanelet2/lanelet2_routing/RoutingGraph.h"),
+( "usr/./include/lanelet2/lanelet2_routing/Route.h", "#scons_targets/./include/lanelet2/lanelet2_routing/Route.h"),
+( "usr/./include/lanelet2/lanelet2_routing/RouteElement.h", "#scons_targets/./include/lanelet2/lanelet2_routing/RouteElement.h"),
+( "usr/./include/lanelet2/lanelet2_routing/LaneletPath.h", "#scons_targets/./include/lanelet2/lanelet2_routing/LaneletPath.h"),
+( "usr/./include/lanelet2/lanelet2_routing/Exceptions.h", "#scons_targets/./include/lanelet2/lanelet2_routing/Exceptions.h"),
+( "usr/./include/lanelet2/lanelet2_routing/ShortestPath.h", "#scons_targets/./include/lanelet2/lanelet2_routing/ShortestPath.h"),
+( "usr/./include/lanelet2/lanelet2_io/Io.h", "#scons_targets/./include/lanelet2/lanelet2_io/Io.h"),
+( "usr/./include/lanelet2/lanelet2_io/Projection.h", "#scons_targets/./include/lanelet2/lanelet2_io/Projection.h"),
+( "usr/./include/lanelet2/lanelet2_io/Exceptions.h", "#scons_targets/./include/lanelet2/lanelet2_io/Exceptions.h"),
+( "usr/./include/lanelet2/lanelet2_io/Configuration.h", "#scons_targets/./include/lanelet2/lanelet2_io/Configuration.h"),
+( "usr/./bin/05_traffic_rules", "#scons_targets/./bin/05_traffic_rules"),
+( "usr/./bin/01_dealing_with_lanelet_primitives", "#scons_targets/./bin/01_dealing_with_lanelet_primitives"),
+( "usr/./bin/06_routing", "#scons_targets/./bin/06_routing"),
+( "usr/./bin/02_regulatory_elements", "#scons_targets/./bin/02_regulatory_elements"),
+( "usr/./bin/03_lanelet_map", "#scons_targets/./bin/03_lanelet_map"),
+( "usr/./bin/lanelet2_validation", "#scons_targets/./bin/lanelet2_validation"),
+( "usr/./bin/04_reading_and_writing", "#scons_targets/./bin/04_reading_and_writing"),
+( "usr/./share/lanelet2/style_images.zip", "#scons_targets/./share/lanelet2/style_images.zip"),
+( "usr/./share/lanelet2/laneletpresets.xml", "#scons_targets/./share/lanelet2/laneletpresets.xml"),
+( "usr/./share/lanelet2/lanelets.mapcss", "#scons_targets/./share/lanelet2/lanelets.mapcss"),
+( "usr/./share/lanelet2/mapping_example.osm", "#scons_targets/./share/lanelet2/mapping_example.osm"),
+( "usr/./share/lanelet2/lines.mapcss", "#scons_targets/./share/lanelet2/lines.mapcss")   
+]
+    
+# This is the debian package we're going to create
+debpkg = '#%s_%s-%s_%s.deb' % (DEBNAME, DEBVERSION, svn_version, DEBARCH)
+
+# and we want it to be built when we build 'debian'
+subdir_env.Alias("debian", debpkg)
+
+DEBCONTROLFILE = os.path.join(DEBNAME, "DEBIAN/control")
+
+# This copies the necessary files into place into place.
+# Fortunately, SCons creates the necessary directories for us.
+for f in DEBFILES:
+    # We put things in a directory named after the package
+    dest = os.path.join(DEBNAME, f[0])
+    # The .deb package will depend on this file
+    subdir_env.Depends(debpkg, dest)
+    # Copy from the the source tree.
+    subdir_env.Command(dest, f[1], Copy('$TARGET','$SOURCE'))
+    # The control file also depends on each source because we'd like
+    # to know the total installed size of the package
+    subdir_env.Depends(DEBCONTROLFILE, dest)
+
+# Now to create the control file:
+
+CONTROL_TEMPLATE = """
+Package: %s
+Priority: extra
+Section: misc
+Installed-Size: %s
+Maintainer: %s
+Architecture: %s
+Version: %s-%s
+Depends: %s
+Description: %s
+
+"""
+subdir_env.Depends(debpkg,DEBCONTROLFILE )
+
+# The control file should be updated when the SVN version changes
+subdir_env.Depends(DEBCONTROLFILE, subdir_env.Value(svn_version))
+
+# This function creates the control file from the template and info
+# specified above, and works out the final size of the package.
+def make_control(target=None, source=None, env=None):
+    installed_size = 0
+    for i in DEBFILES:
+        installed_size += os.stat(str(env.File(i[1])))[6]
+    control_info = CONTROL_TEMPLATE % (
+        DEBNAME, installed_size, DEBMAINT, DEBARCH, DEBVERSION,
+        svn_version, DEBDEPENDS, DEBDESC)
+    f = open(str(target[0]), 'w')
+    f.write(control_info)
+    f.close()
+    
+# We can generate the control file by calling make_control
+subdir_env.Command(DEBCONTROLFILE, None, make_control)
+
+# And we can generate the .deb file by calling dpkg-deb
+subdir_env.Command(debpkg, DEBCONTROLFILE,
+            "fakeroot dpkg-deb -b %s %s" % ("deb/%s" % DEBNAME, "$TARGET"))
