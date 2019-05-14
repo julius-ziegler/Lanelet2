@@ -20,7 +20,7 @@ using Errors = std::vector<std::string>;
 
 namespace {
 // register with factories
-static RegisterParser<OsmParser> regParser;
+RegisterParser<OsmParser> regParser;
 using traits::to2D;
 bool isValid(const LineStrings3d& lss) {
   BasicPolygon2d ls(utils::concatenate(lss, [](const auto& elem) { return to2D(elem).basicLineString(); }));
@@ -347,7 +347,7 @@ class FromFileLoader {  // NOLINT
           reverse(currRing);
           if (!isValid(currRing)) {
             // most probably self-intersecting...
-            parserError(id, "Failed to generate boundary (self-intersecting?");
+            parserError(id, "Failed to generate boundary (self-intersecting?)");
             rings.pop_back();
           }
         }

@@ -52,11 +52,9 @@ std::unique_ptr<LaneletMap> load(const std::string& filename, const std::string&
   return map;
 }
 
-std::vector<std::string> supportedParsers() { return io_handlers::ParserFactory::instance().availableParsers(); }
+std::vector<std::string> supportedParsers() { return io_handlers::ParserFactory::availableParsers(); }
 
-std::vector<std::string> supportedParserExtensions() {
-  return io_handlers::ParserFactory::instance().availableExtensions();
-}
+std::vector<std::string> supportedParserExtensions() { return io_handlers::ParserFactory::availableExtensions(); }
 
 void write(const std::string& filename, const LaneletMap& map, const Origin& origin, ErrorMessages* errors,
            const io::Configuration& params) {
@@ -82,9 +80,7 @@ void write(const std::string& filename, const LaneletMap& map, const std::string
   handleErrorsOrThrow<WriteError>(err, errors);
 }
 
-std::vector<std::string> supportedWriters() { return io_handlers::WriterFactory::instance().availableWriters(); }
+std::vector<std::string> supportedWriters() { return io_handlers::WriterFactory::availableWriters(); }
 
-std::vector<std::string> supportedWriterExtensions() {
-  return io_handlers::WriterFactory::instance().availableExtensions();
-}
+std::vector<std::string> supportedWriterExtensions() { return io_handlers::WriterFactory::availableExtensions(); }
 }  // namespace lanelet

@@ -172,7 +172,6 @@ class MutableParameterVisitor : public boost::static_visitor<void> {  // NOLINT
 //! @ingroup ConstPrimitives
 class RegulatoryElement  // NOLINT
     : public ConstPrimitive<RegulatoryElementData>,
-      public std::enable_shared_from_this<RegulatoryElement>,
       private boost::noncopyable {
  public:
   using ConstType = RegulatoryElement;
@@ -185,6 +184,14 @@ class RegulatoryElement  // NOLINT
   static constexpr char RuleName[] = "basic_regulatory_element";
 
   virtual ~RegulatoryElement();
+
+  /*
+   * @brief set a new id for this primitive
+   *
+   * This is the best way to corrupt a map, because all primitives are
+   * identified by their id. Make sure you know what you are doing!
+   */
+  void setId(Id id) noexcept { data()->id = id; }
 
   //! Returns all parameters as const object (coversion overhead for const)
   ConstRuleParameterMap getParameters() const;
@@ -245,7 +252,7 @@ class RegulatoryElement  // NOLINT
     }
     return utils::getVariant<T>(it->second);
   }
-  void setId(Id id) { std::const_pointer_cast<RegulatoryElementData>(constData())->id = id; }
+
   friend class RegulatoryElementFactory;
   friend class LaneletMap;  // Needs access to add all parameters of a regElem
   explicit RegulatoryElement(Id id = InvalId, const RuleParameterMap& members = RuleParameterMap(),
@@ -427,7 +434,7 @@ inline boost::optional<ConstLanelet> RegulatoryElement::find<ConstLanelet>(Id id
   for (const auto& params : parameters()) {
     for (const auto& elem : params.second) {
       auto telem = boost::get<WeakLanelet>(&elem);
-      if (telem && !telem->expired() && telem->lock().id() == id) {
+      if (telem != nullptr && !telem->expired() && telem->lock().id() == id) {
         return telem->lock();
       }
     }
@@ -440,7 +447,7 @@ inline boost::optional<ConstArea> RegulatoryElement::find<ConstArea>(Id id) cons
   for (const auto& params : parameters()) {
     for (const auto& elem : params.second) {
       auto telem = boost::get<WeakArea>(&elem);
-      if (telem && !telem->expired() && telem->lock().id() == id) {
+      if (telem != nullptr && !telem->expired() && telem->lock().id() == id) {
         return telem->lock();
       }
     }

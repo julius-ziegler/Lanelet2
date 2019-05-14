@@ -71,6 +71,7 @@ struct ShortestPath {
     if (colorMap_[target] == boost::default_color_type::white_color) {
       DijkstraGoalVisitor<VertexType> goalVisitor(target, &colorMap_);
       try {
+        // NOLINTNEXTLINE
         boost::dijkstra_shortest_paths(graph, start,
                                        boost::predecessor_map(predecessors_.data())
                                            .distance_map(distances_.data())
@@ -110,9 +111,8 @@ struct ShortestPath {
     abortIfVertexInvalid(target);
     if (reached(target)) {
       return distances_[target];
-    } else {
-      return {};
-    };
+    }
+    return {};
   }
 
   //! Basic check if vertex ID is reasonable

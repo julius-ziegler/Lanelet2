@@ -15,7 +15,7 @@ Features:
 - **Simple convenience functions** for common tasks when handling maps
 - **Accurate Projection** between the lat/lon geographic world and local metric coordinates
 - **IO Interface** for reading and writing e.g. _osm_ data formats
-- **Python2** bindings for the whole C++ interface
+- **Python** bindings for the whole C++ interface
 - **Boost Geometry** support for all thinkable kinds of geometry calculations on map primitives
 - Released under the [**BSD 3-Clause license**](LICENSE)
 
@@ -33,34 +33,65 @@ You can find more documentation in the individual packages and in doxygen commen
 - To get more information on how to create valid maps, see [here](lanelet2_maps/README.md).
 
 ## Installation
+
+### Using Docker
+
+There is a Docker container from which you can test things out:
+
+```
+docker build -t lanelet2 .                    # builds a docker image named "lanelet2"
+docker run -it --rm lanelet2:latest /bin/bash # starts the docker image
+python -c "import lanelet2"                   # quick check to see everything is fine
+```
+
+The docker image contains a link to your local lanelet2, so you can work and see changes (almost) at the same time. Work with two screens, one local and one on docker. Make your code changes locally, then run again `catkin build` on docker to recompile the code (update python modules).
+
+### Manual installation
+
+In case you want to build it in your own way (without the above Docker image) use these instructions.
+
 Lanelet2 uses [Catkin](https://catkin-tools.readthedocs.io/en/latest/index.html) for building and is targeted towards Linux.
 
 At least C++14 is required.
 
 ### Dependencies
+Besides [Catkin](https://catkin-tools.readthedocs.io/en/latest/index.html), the dependencies are
 * `Boost` (from 1.58)
 * `eigen3`
 * [`mrt_cmake_modules`](https://github.com/KIT-MRT/mrt_cmake_modules), a CMake helper library
 * `pugixml` (for lanelet2_io)
-* `boost-python/python2` (for lanelet2_python)
+* `boost-python, python2 or python3` (for lanelet2_python)
 * `geographiclib` (for lanelet2_projection)
+* `rosbash` (for lanelet2_examples)
 
-For Ubuntu (assuming you the ROS package repository [installed](http://wiki.ros.org/ROS/Installation)):
-```shell
+For Ubuntu, the steps are the following:
+* [Set up ROS](http://wiki.ros.org/ROS/Installation), and install at least `rospack` and `catkin` (e.g. `ros-melodic-rospack` and `ros-melodic-catkin`).
+* Install the dependencies above:
+```bash
 sudo apt-get install libboost-dev libeigen3-dev libgeographic-dev libpugixml-dev libpython-dev libboost-python-dev python-catkin-tools
 ```
 
 ### Building
-As usual with Catkin, you have to crate a workspace and clone all required packages there. Then you can build:
+As usual with Catkin, after you have sourced the ros installation, you have to create a workspace and clone all required packages there. Then you can build.
 ```shell
+source /opt/ros/$ROS_DISTRO/setup.bash
 mkdir catkin_ws && cd catkin_ws && mkdir src
 catkin init
+catkin config --cmake-args -DCMAKE_BUILD_TYPE=RelWithDebInfo # build in release mode (or whatever you prefer)
 cd src
 git clone https://github.com/KIT-MRT/mrt_cmake_modules.git
 git clone https://github.com/fzi-forschungszentrum-informatik/lanelet2.git
 cd ..
 catkin build
 ```
+
+If unsure, see the [Dockerfile](Dockerfile) or the [travis build log](https://travis-ci.org/fzi-forschungszentrum-informatik/Lanelet2). It shows the the full installation process, with subsequent build and test based on a docker image with a clean ubuntu installation.
+
+### Python3
+
+The python bindings are build for your default python installation by default (which currently is python2 on most systems). To build for python3 instead of python2, create a python3 virtualenv before initializing the workspace with `catkin init`. The command `python` should point to `python3`. 
+
+After `catkin init` run `catkin config --cmake-args -DCMAKE_BUILD_TYPE=RelWithDebInfo -DPYTHON_VERSION=3.6` to make sure that the correct python version is used. Then build and use as usual.
 
 ## Examples
 Examples and common use cases in both C++ and Python can be found [here](lanelet2_examples/README.md).

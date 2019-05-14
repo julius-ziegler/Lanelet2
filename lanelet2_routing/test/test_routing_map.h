@@ -16,7 +16,7 @@ namespace tests {
 
 inline RoutingGraphPtr setUpGermanVehicleGraph(LaneletMap& map, double laneChangeCost = 2.,
                                                double participantHeight = 2.) {
-  traffic_rules::TrafficRulesPtr trafficRules{traffic_rules::TrafficRulesFactory::instance().create(
+  traffic_rules::TrafficRulesPtr trafficRules{traffic_rules::TrafficRulesFactory::create(
       Locations::Germany, Participants::Vehicle, traffic_rules::TrafficRules::Configuration())};
   RoutingCostPtrs costPtrs{std::make_shared<RoutingCostDistance>(laneChangeCost),
                            std::make_shared<RoutingCostTravelTime>(laneChangeCost)};
@@ -27,14 +27,14 @@ inline RoutingGraphPtr setUpGermanVehicleGraph(LaneletMap& map, double laneChang
 
 inline RoutingGraphPtr setUpGermanPedestrianGraph(LaneletMap& map, double laneChangeCost = 2.) {
   traffic_rules::TrafficRulesPtr trafficRules{
-      traffic_rules::TrafficRulesFactory::instance().create(Locations::Germany, Participants::Pedestrian)};
+      traffic_rules::TrafficRulesFactory::create(Locations::Germany, Participants::Pedestrian)};
   RoutingCostPtrs costPtrs{std::make_shared<RoutingCostDistance>(laneChangeCost)};
   return RoutingGraph::build(map, *trafficRules, costPtrs);
 }
 
 inline RoutingGraphPtr setUpGermanBicycleGraph(LaneletMap& map, double laneChangeCost = 2.) {
   traffic_rules::TrafficRulesPtr trafficRules{
-      traffic_rules::TrafficRulesFactory::instance().create(Locations::Germany, Participants::Bicycle)};
+      traffic_rules::TrafficRulesFactory::create(Locations::Germany, Participants::Bicycle)};
   RoutingCostPtrs costPtrs{std::make_shared<RoutingCostDistance>(laneChangeCost)};
   return RoutingGraph::build(map, *trafficRules, costPtrs);
 }
@@ -429,7 +429,7 @@ class RoutingGraphTest : public ::testing::Test {
 
 class GermanVehicleGraph : public RoutingGraphTest {
  protected:
-  GermanVehicleGraph() { EXPECT_NO_THROW(graph->checkValidity()); }
+  GermanVehicleGraph() { EXPECT_NO_THROW(graph->checkValidity()); }  // NOLINT
 
  public:
   RoutingGraphConstPtr graph{testData.vehicleGraph};
@@ -438,7 +438,7 @@ class GermanVehicleGraph : public RoutingGraphTest {
 
 class GermanPedestrianGraph : public RoutingGraphTest {
  protected:
-  GermanPedestrianGraph() { EXPECT_NO_THROW(graph->checkValidity()); }
+  GermanPedestrianGraph() { EXPECT_NO_THROW(graph->checkValidity()); }  // NOLINT
 
  public:
   RoutingGraphConstPtr graph{testData.pedestrianGraph};
@@ -447,7 +447,7 @@ class GermanPedestrianGraph : public RoutingGraphTest {
 
 class GermanBicycleGraph : public RoutingGraphTest {
  protected:
-  GermanBicycleGraph() { EXPECT_NO_THROW(graph->checkValidity()); }
+  GermanBicycleGraph() { EXPECT_NO_THROW(graph->checkValidity()); }  // NOLINT
 
  public:
   RoutingGraphConstPtr graph{testData.bicycleGraph};

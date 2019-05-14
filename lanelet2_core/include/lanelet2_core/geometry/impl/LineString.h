@@ -84,8 +84,14 @@ double rangedLength(LineStringIterator start, LineStringIterator end) {
 template <typename LineStringT>
 std::vector<double> lengthRatios(const LineStringT& lineString) {
   std::vector<double> lengths;
+  if (lineString.size() <= 1) {
+    return lengths;
+  }
+  if (lineString.size() == 2) {
+    return {1.};
+  }
   const auto totalLength = length(lineString);
-  lengths.reserve(lineString.empty() ? 0 : lineString.size() - 1);
+  lengths.reserve(lineString.size() - 1);
   helper::forEachPair(lineString.begin(), lineString.end(), [&lengths, &totalLength](const auto& p1, const auto& p2) {
     lengths.push_back(distance(p1, p2) / totalLength);
   });
@@ -116,6 +122,9 @@ traits::BasicPointT<traits::PointType<LineStringT>> interpolatedPointAtDistance(
     currentCumulativeLength += currentLength;
     if (currentCumulativeLength >= dist) {
       double remainingDistance = dist - (currentCumulativeLength - currentLength);
+      if (remainingDistance < 1.e-8) {
+        return p1;
+      }
       return p1 + remainingDistance / currentLength * (p2 - p1);
     }
   }
@@ -141,9 +150,8 @@ traits::PointType<LineStringT> nearestPointAtDistance(LineStringT lineString, do
       double remainingDistance = dist - (currentCumulativeLength - currentLength);
       if (remainingDistance > currentLength / 2.0) {
         return p2;
-      } else {
-        return p1;
       }
+      return p1;
     }
   }
   return lineString.back();
@@ -168,8 +176,8 @@ ArcCoordinates toArcCoordinates(const LineString2dT& lineString, const BasicPoin
   const auto& projectedPoint = res.second;
   // find first point in segment in linestring
   double length = 0.;
-  auto accumulateLength =
-      [&length, &point = projectedPoint.result->segmentPoint1 ](const auto& first, const auto& second) {
+  auto accumulateLength = [&length, &point = projectedPoint.result->segmentPoint1](const auto& first,
+                                                                                   const auto& second) {
     if (boost::geometry::equals(first, point)) {
       return true;
     }
@@ -260,13 +268,16 @@ std::pair<LineString1T, LineString2T> align(LineString1T left, LineString2T righ
   if ((left.size() <= 1 && right.size() <= 1) || right.empty() || left.empty()) {
     return {left, right};
   }
+  auto getMiddlePoint = [](auto& ls) {
+    return ls.size() > 2 ? toBasicPoint(ls[ls.size() / 2]) : (toBasicPoint(ls.front()) + toBasicPoint(ls.back())) * 0.5;
+  };
   //! @todo this sadly is a bit heuristical...
-  bool rightOfLeft = signedDistance(left, toBasicPoint(right[right.size() / 2])) < 0;
+  bool rightOfLeft = signedDistance(left, getMiddlePoint(right)) < 0;
   if (!rightOfLeft && left.size() > 1) {
     left = left.invert();
   }
 
-  bool leftOfRight = signedDistance(right, toBasicPoint(left[left.size() / 2])) > 0;
+  bool leftOfRight = signedDistance(right, getMiddlePoint(left)) > 0;
   if (!leftOfRight && right.size() > 1) {
     right = right.invert();
   }

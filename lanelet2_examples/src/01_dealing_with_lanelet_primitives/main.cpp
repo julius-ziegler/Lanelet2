@@ -11,6 +11,9 @@
 // we want assert statements to work in release mode
 #undef NDEBUG
 
+#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
+#pragma GCC diagnostic ignored "-Wunused-variable"
+
 // we compare floats a couple of times and know this is save in this context
 #pragma GCC diagnostic ignored "-Wfloat-equal"
 
@@ -121,7 +124,7 @@ void part1Points() {
 
   // modifying this reference to the basic point also modifies the actual point data:
   p3dBasic.z() = 4;
-  assert(p3d.z() = 4);
+  assert(p3d.z() == 4);
   // with this eigen point we can do the usual computations:
   BasicPoint3d pTwice = p3d.basicPoint() * 2;
   assert(pTwice.z() == 8);

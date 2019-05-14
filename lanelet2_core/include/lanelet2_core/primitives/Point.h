@@ -4,7 +4,7 @@
 #pragma GCC diagnostic ignored "-Wignored-attributes"
 #pragma GCC diagnostic ignored "-Wint-in-bool-context"
 #endif
-#include <Eigen/Dense>
+#include <Eigen/Core>
 #pragma GCC diagnostic pop
 #include <utility>
 #include "../Forward.h"
@@ -12,6 +12,7 @@
 #include "../utility/Utilities.h"
 #include "Primitive.h"
 #include "Traits.h"
+
 namespace lanelet {
 
 using BasicPoint3d = Eigen::Vector3d;                                //!< a simple 3d-point

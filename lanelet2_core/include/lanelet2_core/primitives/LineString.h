@@ -35,6 +35,7 @@ struct PrimitiveTraits<BasicLineString2d> {
 template <>
 struct LineStringTraits<BasicLineString2d> : public PrimitiveTraits<BasicLineString2d> {
   using PointType = BasicPoint2d;
+  using HybridType = BasicLineString2d;
 };
 template <>
 struct PrimitiveTraits<BasicLineString3d> {
@@ -47,6 +48,7 @@ struct PrimitiveTraits<BasicLineString3d> {
 template <>
 struct LineStringTraits<BasicLineString3d> : public PrimitiveTraits<BasicLineString3d> {
   using PointType = BasicPoint3d;
+  using HybridType = BasicLineString3d;
 };
 template <typename PointT>
 struct PrimitiveTraits<Segment<PointT>> {
@@ -59,6 +61,7 @@ struct PrimitiveTraits<Segment<PointT>> {
 template <typename PointT>
 struct LineStringTraits<Segment<PointT>> : public PrimitiveTraits<Segment<PointT>> {
   using PointType = PointT;
+  using HybridType = Segment<traits::BasicPointT<PointT>>;
 };
 
 }  // namespace traits
@@ -405,10 +408,9 @@ class LineStringImpl : public Primitive<ConstLineStringT> {
       using RViter = std::reverse_iterator<Viter>;
       auto fwIter = points().insert(internal::pointIter(position), RViter(end), RViter(start));
       return RIter(Points3d::reverse_iterator(fwIter + 1));
-    } else {
-      auto fwIter = points().insert(internal::pointIter(position), Viter(start), Viter(end));
-      return RIter(fwIter);
     }
+    auto fwIter = points().insert(internal::pointIter(position), Viter(start), Viter(end));
+    return RIter(fwIter);
   }
 
   //! inserts a new element at the end
@@ -707,7 +709,7 @@ bool has(const ConstLineStringImpl<PointT>& ls, Id id) {
 
 namespace traits {
 template <typename LineStringT>
-using HybridT = typename LineStringT::HybridType;
+using HybridT = typename LineStringTraits<LineStringT>::HybridType;
 
 template <typename LineStringT>
 constexpr auto toHybrid(const LineStringT ls) {

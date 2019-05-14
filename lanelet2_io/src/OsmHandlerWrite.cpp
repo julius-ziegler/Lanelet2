@@ -14,7 +14,7 @@ using Errors = std::vector<std::string>;
 
 namespace {
 // register with factories
-static RegisterWriter<OsmWriter> regWriter;
+RegisterWriter<OsmWriter> regWriter;
 
 class ToFileWriter {
  public:
@@ -145,6 +145,8 @@ class ToFileWriter {
       osmWays.emplace(id, osm::Way(id, std::move(wayAttributes), std::move(wayNodes)));
     } catch (NoSuchPrimitiveError& e) {
       writeError(id, "Way has points that are not point layer: "s + e.what());
+    } catch (std::out_of_range&) {
+      writeError(id, "Way has a point that is not in the map!");
     }
   }
 

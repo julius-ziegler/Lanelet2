@@ -33,6 +33,7 @@ T store(std::shared_ptr<Attribute::Cache>& cache, T&& value) {
   std::atomic_store_explicit(&cache, newCache, std::memory_order_release);
   return value;
 }
+
 template <typename T>
 T* load(const std::shared_ptr<Attribute::Cache>& cache) {
   auto c = std::atomic_load_explicit(&cache, std::memory_order_acquire);
@@ -45,7 +46,7 @@ T* load(const std::shared_ptr<Attribute::Cache>& cache) {
 
 Attribute::Attribute(Id value) : value_(std::to_string(value)) { store(cache_, value); }
 
-Attribute::Attribute(bool value) : value_(std::to_string(value)) { store(cache_, value); }
+Attribute::Attribute(bool value) : value_(std::to_string(int(value))) { store(cache_, value); }
 
 Attribute::Attribute(int value) : value_(std::to_string(value)) { store(cache_, value); }
 
@@ -148,6 +149,7 @@ void Attribute::setValue(const std::string& value) {
   this->value_ = value;
 }
 
+#if __cplusplus < 201703L
 // see https://regexr.com/3knio
 // lanelet types
 constexpr const char AttributeValueString::Node[];
@@ -291,5 +293,5 @@ constexpr const char Participants::Bicycle[];
 constexpr const char Participants::Train[];
 
 constexpr AttributeNamesItem AttributeNamesString::Map[];
-
+#endif
 }  // namespace lanelet

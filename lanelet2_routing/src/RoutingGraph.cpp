@@ -23,7 +23,9 @@
 namespace lanelet {
 namespace routing {
 
+#if __cplusplus < 201703L
 constexpr const char RoutingGraph::ParticipantHeight[];
+#endif
 
 namespace {
 template <typename T>
@@ -78,9 +80,8 @@ bool addToPath(ConstLanelets& path, const Optional<LaneletPath>& newElements) {
   if (newElements) {
     path.insert(path.end(), ++newElements->begin(), newElements->end());
     return true;  // NOLINT
-  } else {
-    return false;
   }
+  return false;
 }
 
 //! Helper function to create a new point that represents a lanelet.
@@ -118,9 +119,8 @@ Optional<ConstLaneletOrArea> neighboringImpl(const GraphType::vertex_descriptor 
   }
   if (outEdges.first != outEdges.second) {
     return graph[boost::target(*(outEdges.first), graph)].laneletOrArea;
-  } else {
-    return {};
-  };
+  }
+  return {};
 }
 
 Optional<ConstLanelet> neighboringLaneletImpl(const GraphType::vertex_descriptor vertex, const FilteredGraph& graph,
@@ -287,7 +287,7 @@ LaneletRelations RoutingGraph::previousRelations(const ConstLanelet& lanelet, bo
   LaneletRelations result;
   for (auto const& it : prev) {
     Optional<RelationType> relation{routingRelation(it, lanelet)};
-    if (relation) {
+    if (!!relation) {
       result.emplace_back(LaneletRelation{it, *relation});
     } else {
       assert(false && "Two Lanelets in a route are not connected. This shouldn't happen.");  // NOLINT
